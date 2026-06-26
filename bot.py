@@ -30,8 +30,7 @@ def send_message(text):
         }
     )
 
-
-     def get_data(symbol, interval):
+def get_data(symbol, interval):
 
     url = (
         "https://api.binance.com/api/v3/klines"
