@@ -96,41 +96,25 @@ sent_signals = {}
 def run():
 
     for symbol in SYMBOLS:
-
         for interval in TIMEFRAMES:
-
-            try:
-
-                df = get_data(symbol, interval)
-
-                if df is None:
-                    continue
-except Exception as e:
-    print(f"Error: {e}")
-    continu
-                
-                signal = check_cross(df)
-
-                key = f"{symbol}_{interval}"
-
-                if signal is None:
-                    continue
-
-                if sent_signals.get(key) == signal:
-                    continue
-
-                sent_signals[key] = signal
-
-                if signal == "BUY":
-
-                    send_message(
-                        f"🟢 EMA 7/25 Bullish Cross\n\n"
-                        f"{symbol}\n"
-                        f"TimeFrame : {interval}"
-                    )
-
-                if signal == "SELL":
-
+    try:
+        df = get_data(symbol, interval)
+        if df is None:
+            continue
+        signal = check_cross(df)
+        key = f"{symbol}_{interval}"
+        if signal is None:
+            continue
+        if sent_signals.get(key) == signal:
+            continue
+        sent_signals[key] = signal
+        if signal == "BUY":
+            send_msg(f"🚀 BUY Signal for {symbol} ({interval})")
+        elif signal == "SELL":
+            send_msg(f"🔻 SELL Signal for {symbol} ({interval})")
+    except Exception as e:
+        print(f"Error in {symbol} {interval}: {e}")
+        continue
                     send_message(
                         f"🔴 EMA 7/25 Bearish Cross\n\n"
                         f"{symbol}\n"
