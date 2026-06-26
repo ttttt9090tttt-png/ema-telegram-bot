@@ -17,3 +17,28 @@ def send_message(text):
     })
 
 print("EMA Bot Started")
+def get_data(symbol, timeframe):
+    url = f"https://api.coinex.com/v2/spot/kline?market={symbol}&period={timeframe}&limit=100"
+
+    r = requests.get(url)
+
+    if r.status_code != 200:
+        return None
+
+    data = r.json()
+
+    if "data" not in data:
+        return None
+
+    closes = []
+
+    for candle in data["data"]:
+        closes.append(float(candle["close"]))
+
+    df = pd.DataFrame(closes, columns=["close"])
+
+    return df
+
+
+def ema(series, period):
+    return series.ewm(span=period, adjust=False).mean()
