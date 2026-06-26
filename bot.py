@@ -134,13 +134,14 @@ def run():
                         f"TimeFrame : {interval}"
                     )
 
-            except Exception as e:
-                print(e)          
-    print("EMA Bot Started")
+except Exception as e:
+    print(e)
+print("EMA Bot Started")
+
+if__ name__ == "__main__":
 
     while True:
-
         run()
-
         time.sleep(300)
-if__ name__ == "__main__":
+            
+            
