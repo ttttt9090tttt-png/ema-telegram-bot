@@ -105,7 +105,10 @@ def run():
 
                 if df is None:
                     continue
-
+except Exception as e:
+    print(f"Error: {e}")
+    continu
+                
                 signal = check_cross(df)
 
                 key = f"{symbol}_{interval}"
