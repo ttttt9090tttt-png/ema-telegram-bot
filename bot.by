@@ -71,3 +71,68 @@ def calculate(df):
     ).mean()
 
     return df
+def check_cross(df):
+
+    df = calculate(df)
+
+    prev7 = df["ema7"].iloc[-2]
+    prev25 = df["ema25"].iloc[-2]
+
+    last7 = df["ema7"].iloc[-1]
+    last25 = df["ema25"].iloc[-1]
+
+    if prev7 < prev25 and last7 > last25:
+        return "BUY"
+
+    if prev7 > prev25 and last7 < last25:
+        return "SELL"
+
+    return None
+
+
+sent_signals = {}
+
+
+def run():
+
+    for symbol in SYMBOLS:
+
+        for interval in TIMEFRAMES:
+
+            try:
+
+                df = get_data(symbol, interval)
+
+                if df is None:
+                    continue
+
+                signal = check_cross(df)
+
+                key = f"{symbol}_{interval}"
+
+                if signal is None:
+                    continue
+
+                if sent_signals.get(key) == signal:
+                    continue
+
+                sent_signals[key] = signal
+
+                if signal == "BUY":
+
+                    send_message(
+                        f" EMA 7/25 Bullish Cross\n\n"
+                        f"{symbol}\n"
+                        f"TimeFrame : {interval}"
+                    )
+
+                if signal == "SELL":
+
+                    send_message(
+                        f" EMA 7/25 Bearish Cross\n\n"
+                        f"{symbol}\n"
+                        f"TimeFrame : {interval}"
+                    )
+
+            except Exception as e:
+                print(e)
