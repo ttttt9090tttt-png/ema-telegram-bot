@@ -136,7 +136,8 @@ def run():
 
             except Exception as e:
                 print(e)
-if name == "__main__":
+                
+                if__ name__ == "__main__":
 
     print("EMA Bot Started")
 
