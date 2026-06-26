@@ -1,2 +1,4 @@
+import requests
 
-print("hi")
+print("EMA Bot Started")
+
