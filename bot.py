@@ -139,7 +139,6 @@ except Exception as e:
 print("EMA Bot Started")
 
 if__ name__ == "__main__":
-
     while True:
         run()
         time.sleep(300)
