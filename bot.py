@@ -135,10 +135,8 @@ def run():
                     )
 
             except Exception as e:
-                print(e)
-                
+                print(e)          
                 if__ name__ == "__main__":
-
     print("EMA Bot Started")
 
     while True:
