@@ -1,101 +1,73 @@
 import requests
-print("EMA Bot Started")
-import requests
 import pandas as pd
- BOT_TOKEN =8878020030:AAEAG5LwlQUiXWuJDplPr7kZ0wNCQP-IAYg 
+import time
 
+BOT_TOKEN = "8878020030:AAEAG5LwlQUiXWuJDplPr7kZ0wNCQP-IAYg"
 CHAT_ID = "1186512882"
 
-SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
-TIMEFRAMES = ["5min", "15min"]
+SYMBOLS = [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT"
+]
+
+TIMEFRAMES = [
+    "5m",
+    "15m"
+]
+
+EMA_FAST = 7
+EMA_SLOW = 25
+
 
 def send_message(text):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    requests.post(url, data={
-        "chat_id": CHAT_ID,
-        "text": text
-    })
+    requests.post(
+        url,
+        data={
+            "chat_id": CHAT_ID,
+            "text": text
+        }
+    )
 
-print("EMA Bot Started")
-def get_data(symbol, timeframe):
-    url = f"https://api.coinex.com/v2/spot/kline?market={symbol}&period={timeframe}&limit=100"
 
-    r = requests.get(url)
+def get_data(symbol, interval):
+
+    url = (
+        "https://api.binance.com/api/v3/klines"
+        f"?symbol={symbol}&interval={interval}&limit=100"
+    )
+
+    r = requests.get(url, timeout=15)
 
     if r.status_code != 200:
         return None
 
-    data = r.json()
-
-    if "data" not in data:
-        return None
+    candles = r.json()
 
     closes = []
 
-    for candle in data["data"]:
-        closes.append(float(candle["close"]))
+    for c in candles:
+        closes.append(float(c[4]))
 
-    df = pd.DataFrame(closes, columns=["close"])
+    df = pd.DataFrame(
+        closes,
+        columns=["close"]
+    )
 
     return df
 
 
-def ema(series, period):
-    return series.ewm(span=period, adjust=False).mean()
-EMA_FAST = 7
-EMA_SLOW = 25
+def calculate(df):
 
-def calculate_ema(df):
-    df["ema7"] = df["close"].ewm(span=EMA_FAST, adjust=False).mean()
-    df["ema25"] = df["close"].ewm(span=EMA_SLOW, adjust=False).mean()
+    df["ema7"] = df["close"].ewm(
+        span=EMA_FAST,
+        adjust=False
+    ).mean()
+
+    df["ema25"] = df["close"].ewm(
+        span=EMA_SLOW,
+        adjust=False
+    ).mean()
+
     return df
-
-
-def check_cross(df):
-    df = calculate_ema(df)
-
-    prev_fast = df["ema7"].iloc[-2]
-    prev_slow = df["ema25"].iloc[-2]
-
-    last_fast = df["ema7"].iloc[-1]
-    last_slow = df["ema25"].iloc[-1]
-
-    if prev_fast < prev_slow and last_fast > last_slow:
-        return "BUY"
-
-    if prev_fast > prev_slow and last_fast < last_slow:
-        return "SELL"
-
-    return None
-def run():
-
-    for symbol in SYMBOLS:
-
-        for tf in TIMEFRAMES:
-
-            df = get_data(symbol, tf)
-
-            if df is None:
-                continue
-
-            signal = check_cross(df)
-
-            if signal == "BUY":
-
-                send_message(
-                    f" EMA Cross Buy\n"
-                    f"{symbol}\n"
-                    f"TimeFrame : {tf}"
-                )
-
-            elif signal == "SELL":
-
-                send_message(
-                    f" EMA Cross Sell\n"
-                    f"{symbol}\n"
-                    f"TimeFrame : {tf}"
-                )
-
-
-if name == "__main__":
-    run()
