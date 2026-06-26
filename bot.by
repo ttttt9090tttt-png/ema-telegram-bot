@@ -1,4 +1,19 @@
 import requests
+print("EMA Bot Started")
+import requests
+import pandas as pd
+ BOT_TOKEN =8878020030:AAEAG5LwlQUiXWuJDplPr7kZ0wNCQP-IAYg 
+
+CHAT_ID = "1186512882"
+
+SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
+TIMEFRAMES = ["5min", "15min"]
+
+def send_message(text):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    requests.post(url, data={
+        "chat_id": CHAT_ID,
+        "text": text
+    })
 
 print("EMA Bot Started")
-
