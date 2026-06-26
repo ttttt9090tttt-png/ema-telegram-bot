@@ -1,10 +1,10 @@
-﻿import time
+import time
 import pandas as pd
-﻿import requests
+import requests
 from telegram import Update
 from telegram.ext import Application, CommandHandler
 
-BOT_TOKEN = "8878020030:AAEAG5LwlQUiXWuJDplPr7kZ0wNCQP-IAYg "
+BOT_TOKEN = "8878020030:AAEAG5LwlQUiXWuJDplPr7kZ0wNCQP-IAYg"
 CHAT_ID = "1186512882"
 SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
 TIMEFRAMES = ["15", "30", "60"]
