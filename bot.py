@@ -97,7 +97,7 @@ def run():
 
     for symbol in SYMBOLS:
         for interval in TIMEFRAMES:
-    try:
+         try:
         df = get_data(symbol, interval)
         if df is None:
             continue
