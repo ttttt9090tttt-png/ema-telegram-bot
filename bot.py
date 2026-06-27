@@ -6,7 +6,7 @@ import pandas as pd
 from flask import Flask
 
 # ==================== تنظیمات ====================
-BOT_TOKEN = os.getenv("BOT_TOKEN", "8878020030:AAEAG5LwlQUiXWuJDplPr7kZ0wNCQP-IAYg")
+BOT_TOKEN = os.getenv("BOT_TOKEN", "8878020030:AAEAG5LwlQUiXWuJDplPr7kZ0wNCQP-IAYg ")
 CHAT_ID = os.getenv("CHAT_ID", "1186512882")
 
 SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
@@ -103,7 +103,7 @@ def ping():
     return "🏓 Pong"
 
 # ==================== اجرای همزمان ====================
-if __name__ == "__main__":
+if name == "__main__":
     # اجرای ربات در ترد جداگانه
     worker = threading.Thread(target=run, daemon=True)
     worker.start()
