@@ -103,7 +103,7 @@ def ping():
     return "🏓 Pong"
 
 # ==================== اجرای همزمان ====================
-if name == "__main__":
+if__ name__ == "__main__":
     # اجرای ربات در ترد جداگانه
     worker = threading.Thread(target=run, daemon=True)
     worker.start()
