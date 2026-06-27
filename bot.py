@@ -4,27 +4,22 @@ import threading
 import pandas as pd
 import requests
 from flask import Flask
-from telegram import Update
-from telegram.ext import Application, CommandHandler
 
-# =============== تنظیمات ================
+app = Flask(__name__)
+
 BOT_TOKEN = "8878020030:AAEAG5LwlQUiXWuJDplPr7kZ0wNCQP-IAYg"
 CHAT_ID = "1186512882"
 SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
-
-# ✅ تغییر مورد نظر شما: تایم‌فریم‌ها = 5، 15، 60
 TIMEFRAMES = ["5", "15", "60"]
 
 sent_signals = {}
-app = Flask(__name__)
 
-# =============== توابع ربات ================
 def send_msg(text):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     try:
         requests.post(url, data={"chat_id": CHAT_ID, "text": text})
     except Exception as e:
-        print(f"Error sending message: {e}")
+        print(f"Error: {e}")
 
 def get_data(symbol, interval):
     url = f"https://api.nobitex.ir/market/udf/history?symbol={symbol}&resolution={interval}&count=100"
@@ -70,11 +65,10 @@ def run():
                     elif signal == "SELL":
                         send_msg(f"SELL Signal for {symbol} ({interval})")
                 except Exception as e:
-                    print(f"Error in {symbol} {interval}: {e}")
+                    print(f"Error: {e}")
                     continue
         time.sleep(300)
 
-# =============== وب‌سرور برای Render ================
 @app.route('/')
 def home():
     return "Bot is running!", 200
@@ -83,12 +77,8 @@ def home():
 def ping():
     return "Pong", 200
 
-# =============== اجرا ================
 if __name__ == "__main__":
-    # اجرای ربات در یک ترد جداگانه
     thread = threading.Thread(target=run, daemon=True)
     thread.start()
-    
-    # اجرای وب‌سرور
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
