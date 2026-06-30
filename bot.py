@@ -1,17 +1,11 @@
 import os
-import time
-import threading
-import pandas as pd
-import requests
 import logging
-import asyncio
-
 from flask import Flask, request
 from telegram import Update, Bot
 from telegram.ext import Application, CommandHandler, ContextTypes
 
 # ============================================
-# تنظیمات
+# تنظیمات اولیه
 # ============================================
 
 TOKEN = "8993671459:AAGc0qEfrWx8tbXY5n4TsyBz_McpV58Gsv8"
@@ -21,15 +15,20 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+
+# ============================================
+# راه‌اندازی ربات (بدون async)
+# ============================================
+
 bot = Bot(token=TOKEN)
 application = Application.builder().token(TOKEN).build()
 
 # ============================================
-# دستور /start
+# دستور /start (بدون async)
 # ============================================
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
+def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    update.message.reply_text(
         "✅ ربات کراس EMA فعال است!\n\n"
         "📊 نماد: BTC/USDT\n"
         "⏱️ تایم‌فریم: 5m\n"
@@ -42,14 +41,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 application.add_handler(CommandHandler("start", start))
 
 # ============================================
-# مسیر Webhook
+# مسیر Webhook (بدون async)
 # ============================================
 
 @app.route('/webhook', methods=['POST'])
-async def webhook():
+def webhook():
     try:
-        update = Update.de_json(request.get_json(), bot)
-        await application.process_update(update)
+        json_data = request.get_json(force=True)
+        update = Update.de_json(json_data, bot)
+        application.process_update(update)
         return 'ok', 200
     except Exception as e:
         logger.error(f"Webhook error: {e}")
