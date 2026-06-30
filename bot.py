@@ -7,7 +7,7 @@ from flask import Flask
 
 app = Flask(__name__)
 
-BOT_TOKEN = "8878020030:AAEAG5LwlQUiXWuJDplPr7kZ0wNCQP-IAYg"
+BOT_TOKEN = "8993671459:AAGc0qEfrWx8tbXY5n4TsyBz_McpV58Gsv8"
 CHAT_ID = "1186512882"
 SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
 TIMEFRAMES = ["5", "15", "60"]
