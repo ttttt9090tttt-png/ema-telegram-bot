@@ -82,3 +82,13 @@ if __name__ == "__main__":
     thread.start()
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    try:
+        update = Update.de_json(request.get_json(), bot)
+        dispatcher.process_update(update)
+        return 'ok', 200
+    except Exception as e:
+        logger.error(f"Webhook error: {e}")
+        return 'error', 500
