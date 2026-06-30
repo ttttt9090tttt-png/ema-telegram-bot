@@ -48,7 +48,7 @@ application.add_handler(CommandHandler("start", start))
 def webhook():
     try:
         update = Update.de_json(request.get_json(), bot)
-        application.process_update(update)
+       await application.process_update(update)
         return 'ok', 200
     except Exception as e:
         logger.error(f"Webhook error: {e}")
