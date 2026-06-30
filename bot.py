@@ -1,11 +1,11 @@
 import os
 import logging
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from telegram import Update, Bot
 from telegram.ext import Application, CommandHandler, ContextTypes
 
 # ============================================
-# تنظیمات اولیه
+# تنظیمات
 # ============================================
 
 TOKEN = "8993671459:AAGc0qEfrWx8tbXY5n4TsyBz_McpV58Gsv8"
@@ -15,20 +15,15 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-
-# ============================================
-# راه‌اندازی ربات (بدون async)
-# ============================================
-
 bot = Bot(token=TOKEN)
 application = Application.builder().token(TOKEN).build()
 
 # ============================================
-# دستور /start (بدون async)
+# دستور /start
 # ============================================
 
-def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    update.message.reply_text(
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
         "✅ ربات کراس EMA فعال است!\n\n"
         "📊 نماد: BTC/USDT\n"
         "⏱️ تایم‌فریم: 5m\n"
@@ -41,19 +36,20 @@ def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 application.add_handler(CommandHandler("start", start))
 
 # ============================================
-# مسیر Webhook (بدون async)
+# مسیر Webhook (نسخه ساده و بدون خطا)
 # ============================================
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
     try:
-        json_data = request.get_json(force=True)
-        update = Update.de_json(json_data, bot)
+        # دریافت و پردازش درخواست
+        update = Update.de_json(request.get_json(force=True), bot)
         application.process_update(update)
-        return 'ok', 200
+        return jsonify({"status": "ok"}), 200
     except Exception as e:
-        logger.error(f"Webhook error: {e}")
-        return 'error', 500
+        # ثبت خطا در لاگ‌های Render
+        logger.error(f"Webhook error: {e}", exc_info=True)
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # ============================================
 # مسیر اصلی
