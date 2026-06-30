@@ -1,8 +1,8 @@
 import os
 import logging
-from flask import Flask, request, jsonify
+from flask import Flask, request
 from telegram import Update, Bot
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram.ext import Application, CommandHandler
 
 # ============================================
 # تنظیمات
@@ -15,6 +15,11 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+
+# ============================================
+# راه‌اندازی ربات (نسخه ساده)
+# ============================================
+
 bot = Bot(token=TOKEN)
 application = Application.builder().token(TOKEN).build()
 
@@ -22,7 +27,7 @@ application = Application.builder().token(TOKEN).build()
 # دستور /start
 # ============================================
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def start(update: Update, context):
     await update.message.reply_text(
         "✅ ربات کراس EMA فعال است!\n\n"
         "📊 نماد: BTC/USDT\n"
@@ -36,20 +41,22 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 application.add_handler(CommandHandler("start", start))
 
 # ============================================
-# مسیر Webhook (نسخه ساده و بدون خطا)
+# مسیر Webhook (ساده و بدون خطا)
 # ============================================
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
     try:
-        # دریافت و پردازش درخواست
-        update = Update.de_json(request.get_json(force=True), bot)
+        # دریافت داده
+        json_data = request.get_json(force=True)
+        # ساخت آبجکت Update
+        update = Update.de_json(json_data, bot)
+        # پردازش
         application.process_update(update)
-        return jsonify({"status": "ok"}), 200
+        return "ok", 200
     except Exception as e:
-        # ثبت خطا در لاگ‌های Render
-        logger.error(f"Webhook error: {e}", exc_info=True)
-        return jsonify({"status": "error", "message": str(e)}), 500
+        logger.error(f"Webhook ERROR: {e}")
+        return "error", 500
 
 # ============================================
 # مسیر اصلی
